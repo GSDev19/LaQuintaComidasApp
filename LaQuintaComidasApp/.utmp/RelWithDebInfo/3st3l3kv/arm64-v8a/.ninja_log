@@ -1,0 +1,12 @@
+# ninja log v5
+66	1009	7669116311201138	FramePacing/CMakeFiles/swappywrapper.dir/UnitySwappyWrapper.cpp.o	f5acfef1e444d393
+1010	2641	7669116325655790	G:/UnityProjects/LaQuintaComidasApp/LaQuintaComidasApp/LaQuintaComidasApp/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/RelWithDebInfo/3st3l3kv/obj/arm64-v8a/libswappywrapper.so	3567c2295f993d95
+28	3978	7669116340295117	GameActivity/CMakeFiles/game.dir/UGAEntry.cpp.o	9b645eede44d664c
+21	3992	7669116340976403	GameActivity/CMakeFiles/game.dir/UGAConfiguration.cpp.o	8bc5e8b4197a4211
+43	4016	7669116341209024	GameActivity/CMakeFiles/game.dir/UGAInputKeyEvent.cpp.o	ca47c2b18624851d
+58	4058	7669116341690035	GameActivity/CMakeFiles/game.dir/UGAInputMotionEvent.cpp.o	1b8f893ad0e2dee0
+1	4147	7669116342573361	GameActivity/CMakeFiles/game.dir/UGADebug.cpp.o	7e7d173475ea94db
+36	4541	7669116346496180	GameActivity/CMakeFiles/game.dir/UGAInput.cpp.o	3e699b3aeb8f781b
+12	4652	7669116347606935	GameActivity/CMakeFiles/game.dir/UGAApplication.cpp.o	73951cdca52139e9
+51	4673	7669116347780932	GameActivity/CMakeFiles/game.dir/UGASoftKeyboard.cpp.o	e54631ef8a82cd4a
+4673	4838	7669116349475856	G:/UnityProjects/LaQuintaComidasApp/LaQuintaComidasApp/LaQuintaComidasApp/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/RelWithDebInfo/3st3l3kv/obj/arm64-v8a/libgame.so	e0343fd19e26903e
