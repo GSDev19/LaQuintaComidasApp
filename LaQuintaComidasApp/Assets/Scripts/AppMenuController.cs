@@ -1,15 +1,17 @@
 using System;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class AppMenuController : MonoBehaviour
+public class AppMenuController : Singleton<AppMenuController>
 {
-    public static Action OnSetImagesAction;
-    public static Action OnSaveMenuAction;
+    public static Action OnCreateImageAction;
+    public static Action OnDownloadMenuAction;
 
     public Button _createButton;
-    public Button _saveButton;
+    public Button _downloadButton;
+    public Button _backButton;
 
     public Button _optionButtonPrefab;
     public CanvasGroup _optionMenuCanvasGroup;
@@ -21,6 +23,8 @@ public class AppMenuController : MonoBehaviour
     public CanvasGroup _daySelectionCanvasGroup;
     public Transform _dayOptionsParent;
 
+    public static string SelectedDayString => Instance._selectedDay.ToString();
+
     [Header("Food")]
     public int _currentFoodIndex;
     public Button[] _foodButtons;
@@ -28,25 +32,36 @@ public class AppMenuController : MonoBehaviour
     public CanvasGroup _foodSelectionCanvasGroup;
     public Transform _foodOptionsParent;
 
+    public static List<string> FoodNames = new List<string>(6);
 
-    private void Awake()
+    protected override void Awake()
     {
-        _createButton.interactable = false;
-        _saveButton.interactable = false;
+        base.Awake();
 
         _createButton.onClick.AddListener(() => OnCreateButtonClicked());
-        _saveButton.onClick.AddListener(() => OnSaveMenuButtonClicked());
+        _backButton.onClick.AddListener(() => OnBackButtonClicked());
+        _downloadButton.onClick.AddListener(() => OnDownloadButtonClicked());
+
+        _createButton.gameObject.SetActive(false);
+        _downloadButton.gameObject.SetActive(false);
+        _backButton.gameObject.SetActive(false);
 
         UIHelpers.SetCanvasGroup(_optionMenuCanvasGroup, true);
         UIHelpers.SetCanvasGroup(_daySelectionCanvasGroup, false);
         UIHelpers.SetCanvasGroup(_foodSelectionCanvasGroup, false);
 
-
+        _selectedDay = Days.Lunes;
         _daySelectionButton.onClick.AddListener(() => UIHelpers.SetCanvasGroup(_daySelectionCanvasGroup, true));
         SetupDayButtons();
 
         SetFoodButtons();
         SetFoodsTexts();
+
+        FoodNames = new List<string>(6);
+        for (int i = 0; i < 6; i++)
+        {
+            FoodNames.Add(string.Empty);
+        }
     }
     private void OnEnable()
     {
@@ -63,18 +78,38 @@ public class AppMenuController : MonoBehaviour
 
         CreateFoodOptionButtons();
     }
+
+    private void OnBackButtonClicked()
+    {
+        UIHelpers.SetCanvasGroup(_optionMenuCanvasGroup, true);
+        UIHelpers.SetCanvasGroup(_daySelectionCanvasGroup, false);
+        UIHelpers.SetCanvasGroup(_foodSelectionCanvasGroup, false);
+
+        _createButton.gameObject.SetActive(true);
+        _downloadButton.gameObject.SetActive(false);
+        _backButton.gameObject.SetActive(false);
+    }
     private void OnCreateButtonClicked()
     {
-        OnSetImagesAction?.Invoke();
-        _createButton.interactable = false;
-        _saveButton.interactable = true;
+        UIHelpers.SetCanvasGroup(_optionMenuCanvasGroup, false);
+
+        LoadScreenController.OnLoadingScreenEnable?.Invoke(true);
+        LoadScreenController.OnLoadingTextChanged?.Invoke("Creando imagen ...");
+
+        OnCreateImageAction?.Invoke();
+        _createButton.gameObject.SetActive(false);
+        _downloadButton.gameObject.SetActive(true);
+        _backButton.gameObject.SetActive(true);
     }
-    private void OnSaveMenuButtonClicked()
+    private void OnDownloadButtonClicked()
     {
-        OnSaveMenuAction?.Invoke();
+        LoadScreenController.OnLoadingScreenEnable?.Invoke(true);
+        LoadScreenController.OnLoadingTextChanged?.Invoke("Descargando imagen ...");
+
+        OnDownloadMenuAction?.Invoke();
     }
 
-    #region
+    #region DAYS
     private void SetupDayButtons()
     {
         // Corrected the foreach loop to iterate over the values of the Days enum
@@ -92,6 +127,7 @@ public class AppMenuController : MonoBehaviour
     {
         _selectedDay = day;
         _daySelectionText.text = _selectedDay.ToString();
+
         UIHelpers.SetCanvasGroup(_optionMenuCanvasGroup, true);
         UIHelpers.SetCanvasGroup(_daySelectionCanvasGroup, false);
     }
@@ -139,9 +175,40 @@ public class AppMenuController : MonoBehaviour
 
     private void OnFoodOptionClicked(string foodName)
     {
-        _foodTexts[_currentFoodIndex].text = foodName;
         UIHelpers.SetCanvasGroup(_foodSelectionCanvasGroup, false);
         UIHelpers.SetCanvasGroup(_optionMenuCanvasGroup, true);
+
+        _foodTexts[_currentFoodIndex].text = foodName;
+        FoodNames[_currentFoodIndex] = foodName;
+
+        _createButton.gameObject.SetActive(CheckIfAllFoodNamesAreSet() && CheckIfAllFoodNamesAreDifferent());        
+    }
+
+    private bool CheckIfAllFoodNamesAreSet()
+    {
+        foreach (var item in FoodNames)
+        {
+            if (string.IsNullOrEmpty(item))
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+    private bool CheckIfAllFoodNamesAreDifferent()
+    {
+        HashSet<string> uniqueNames = new HashSet<string>();
+        foreach (var item in FoodNames)
+        {
+            if (!string.IsNullOrEmpty(item))
+            {
+                if (!uniqueNames.Add(item))
+                {
+                    return false; // Duplicate found
+                }
+            }
+        }
+        return true; // All names are unique
     }
 
     #endregion

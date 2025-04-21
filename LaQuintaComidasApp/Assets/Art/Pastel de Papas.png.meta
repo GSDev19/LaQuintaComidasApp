@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: dc23678f9a2d2cd4e9ef38a71bbc86a9
+guid: 844876e9174c1d64fbcfe12d1f100766
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -7141572602352217013
-    second: square-rounded-512_0
+      213: -4387337835670717584
+    second: Pastel de Papas_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -139,7 +139,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: square-rounded-512_0
+      name: Pastel de Papas_0
       rect:
         serializedVersion: 2
         x: 0
@@ -147,15 +147,15 @@ TextureImporter:
         width: 512
         height: 512
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 54, y: 54, z: 54, w: 54}
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: b44522b4e8904ec90800000000000000
-      internalID: -7141572602352217013
+      spriteID: 07b373bcb7b0d13c0800000000000000
+      internalID: -4387337835670717584
       vertices: []
       indices: 
       edges: []
@@ -164,7 +164,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 0f7c2563f683aef4eb86679c39b310a7
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -173,8 +173,7 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable:
-      square-rounded-512_0: -7141572602352217013
+    nameFileIdTable: {}
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
