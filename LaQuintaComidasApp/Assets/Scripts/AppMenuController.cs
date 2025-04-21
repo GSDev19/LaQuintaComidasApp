@@ -19,7 +19,7 @@ public class AppMenuController : MonoBehaviour
     public Button _daySelectionButton;
     public TextMeshProUGUI _daySelectionText;
     public CanvasGroup _daySelectionCanvasGroup;
-    public Button[] _dayButtons;
+    public Transform _dayOptionsParent;
 
     [Header("Food")]
     public int _currentFoodIndex;
@@ -74,16 +74,17 @@ public class AppMenuController : MonoBehaviour
         OnSaveMenuAction?.Invoke();
     }
 
-    #region DAYS
+    #region
     private void SetupDayButtons()
     {
-        for (int i = 0; i < _dayButtons.Length; i++)
+        // Corrected the foreach loop to iterate over the values of the Days enum
+        foreach (Days day in Enum.GetValues(typeof(Days)))
         {
-            int index = i; // Prevent closure issue
-            _dayButtons[i].GetComponentInChildren<TextMeshProUGUI>().text = ((Days)i).ToString();
-            _dayButtons[i].onClick.AddListener(() =>
+            Button button = Instantiate(_optionButtonPrefab, _dayOptionsParent);
+            button.GetComponentInChildren<TextMeshProUGUI>().text = day.ToString();
+            button.onClick.AddListener(() =>
             {
-                OnDayOptionClicked((Days)index);
+                OnDayOptionClicked(day);
             });
         }
     }
