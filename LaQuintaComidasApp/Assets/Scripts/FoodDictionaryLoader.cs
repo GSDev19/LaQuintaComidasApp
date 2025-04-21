@@ -1,14 +1,19 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 using Utilities;
 
-public class FoodDictionaryLoader : MonoBehaviour
+public class FoodDictionaryLoader : Singleton<FoodDictionaryLoader>
 {
+    public static Action OnImagesDictionaryLoaded;
+
     public string sheetCSVUrl = "https://docs.google.com/spreadsheets/d/e/YOUR_ID/pub?output=csv";
 
+    public static UDictionary<string, string> FoodDictionary => Instance.foodDictionary;
     public UDictionary<string, string> foodDictionary = new UDictionary<string, string>();
+
     public UDictionary<string, Sprite> imagesDictionary = new UDictionary<string, Sprite>();
 
     void Start()
@@ -46,6 +51,8 @@ public class FoodDictionaryLoader : MonoBehaviour
                 }
             }
         }
+
+        OnImagesDictionaryLoaded?.Invoke();
     }
 
     string ConvertToDirectLink(string shareLink)
