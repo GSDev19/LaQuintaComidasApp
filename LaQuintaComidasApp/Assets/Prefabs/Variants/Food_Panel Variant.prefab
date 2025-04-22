@@ -90,11 +90,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6883708488020517584, guid: 668f31d4a409ac141947c10d6f86baa0, type: 3}
       propertyPath: m_fontSize
-      value: 100
+      value: 18
       objectReference: {fileID: 0}
     - target: {fileID: 9060280941027200969, guid: 668f31d4a409ac141947c10d6f86baa0, type: 3}
       propertyPath: m_fontSize
-      value: 100
+      value: 18
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

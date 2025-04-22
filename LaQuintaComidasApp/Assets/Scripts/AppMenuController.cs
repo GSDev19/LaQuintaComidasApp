@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -14,27 +15,39 @@ public class AppMenuController : Singleton<AppMenuController>
     public Button _downloadButton;
     public Button _backButton;
 
+    public SelectionPanel selectionPanelPrefab;
+
     public Button _optionButtonPrefab;
 
     public UDictionary<Panels, CanvasGroup> _canvasGroups = new UDictionary<Panels, CanvasGroup>();
 
     public CanvasGroup _buttonsCanvasGroup;
 
+    [Header("Options Pool")]
+    public Transform _optionsContentParent;
+    public int _maxOptionButtons = 200;
+    private List<Button> _optionButtonsPool = new List<Button>();
+
+
     [Header("Days")]
+    public static string SelectedDayString => Instance._selectedDay.ToString();
     public Days _selectedDay;
     public Button _daySelectionButton;
     public TextMeshProUGUI _daySelectionText;
-    public Transform _dayOptionsParent;
 
-    public static string SelectedDayString => Instance._selectedDay.ToString();
+    [Header("Amount")]
+    public static string SelectedAmount => Instance._selectedAmount.ToString();
+    public Amount _selectedAmount;
+    public Button _amountSelectionButton;
+    public TextMeshProUGUI _amountSelectionText;
 
     [Header("Food")]
     public int _currentFoodIndex;
-    public Button[] _foodButtons;
-    public TextMeshProUGUI[] _foodTexts;
-    public Transform _foodOptionsParent;
+    public Transform _foodSelectionParent;
+    public List<Button> _foodButtons;
+    public List<TextMeshProUGUI> _foodTexts;
 
-    public static List<string> FoodNames = new List<string>(6);
+    public List<string> FoodNames = new List<string>(6);
 
     protected override void Awake()
     {
@@ -53,42 +66,48 @@ public class AppMenuController : Singleton<AppMenuController>
 
         _selectedDay = Days.Lunes;
         _daySelectionButton.onClick.AddListener(() => OnDayButtonClicked());
-        SetupDayButtons();
 
-        SetFoodButtons();
-        SetFoodsTexts();
+        _selectedAmount = Amount.Seis;
+        _amountSelectionText.text = string.Empty;
+        _amountSelectionButton.onClick.AddListener(() => OnAmountButtonClicked());
 
-        FoodNames = new List<string>(6);
-        for (int i = 0; i < 6; i++)
+        InitializeOptionButtonsPool();
+    }
+    private void InitializeOptionButtonsPool()
+    {
+        for (int i = 0; i < _maxOptionButtons; i++)
         {
-            FoodNames.Add(string.Empty);
+            Button button = Instantiate(_optionButtonPrefab, _optionsContentParent);
+            button.gameObject.SetActive(false);
+            _optionButtonsPool.Add(button);
+        }
+    }
+    private void ShowOptionsPanel(List<string> optionNames, Action<string> onOptionSelected)
+    {
+        EnableMenuCanvas(Panels.OptionsPanel);
+        UIHelpers.SetCanvasGroup(_buttonsCanvasGroup, false);
+
+        for (int i = 0; i < _optionButtonsPool.Count; i++)
+        {
+            _optionButtonsPool[i].gameObject.SetActive(false);
+        }
+
+        for (int i = 0; i < optionNames.Count; i++)
+        {
+            var button = _optionButtonsPool[i];
+            button.gameObject.SetActive(true);
+            button.GetComponentInChildren<TextMeshProUGUI>().text = optionNames[i];
+
+            button.onClick.RemoveAllListeners();
+            string optionValue = optionNames[i];
+            button.onClick.AddListener(() =>
+            {
+                onOptionSelected(optionValue);
+            });
         }
     }
 
-    private void EnableMenuCanvas(Panels panel)
-    {
-        foreach (var item in _canvasGroups)
-        {
-            UIHelpers.SetCanvasGroup(item.Value, item.Key == panel);
-        }
-    }
-
-    private void OnEnable()
-    {
-        FoodDictionaryLoader.OnImagesDictionaryLoaded += HandleImagesLoaded;
-    }
-    private void OnDisable()
-    {
-        FoodDictionaryLoader.OnImagesDictionaryLoaded -= HandleImagesLoaded;
-    }
-
-    private void HandleImagesLoaded()
-    {
-        _createButton.interactable = true;
-
-        CreateFoodOptionButtons();
-    }
-
+    #region BUTTONS
     private void OnBackButtonClicked()
     {
         EnableMenuCanvas(Panels.MainMenu);
@@ -120,87 +139,110 @@ public class AppMenuController : Singleton<AppMenuController>
         OnDownloadMenuAction?.Invoke();
     }
 
+    #endregion
+
     #region DAYS
     private void OnDayButtonClicked()
     {
-        EnableMenuCanvas(Panels.DaySelection);
-        UIHelpers.SetCanvasGroup(_buttonsCanvasGroup, false);
+        var days = Enum.GetNames(typeof(Days)).ToList();
+        ShowOptionsPanel(days, OnDayOptionSelected);
     }
-    private void SetupDayButtons()
+    private void OnDayOptionSelected(string day)
     {
-        // Corrected the foreach loop to iterate over the values of the Days enum
-        foreach (Days day in Enum.GetValues(typeof(Days)))
-        {
-            Button button = Instantiate(_optionButtonPrefab, _dayOptionsParent);
-            button.GetComponentInChildren<TextMeshProUGUI>().text = day.ToString();
-            button.onClick.AddListener(() =>
-            {
-                OnDayOptionClicked(day);
-            });
-        }
-    }
-    private void OnDayOptionClicked(Days day)
-    {
-        _selectedDay = day;
-        _daySelectionText.text = _selectedDay.ToString();
+        _selectedDay = Enum.Parse<Days>(day);
+        _daySelectionText.text = day;
 
         EnableMenuCanvas(Panels.MainMenu);
         UIHelpers.SetCanvasGroup(_buttonsCanvasGroup, true);
     }
     #endregion
 
+    #region AMOUNT
+    private void OnAmountButtonClicked()
+    {
+        var amounts = Enum.GetNames(typeof(Amount)).ToList();
+        ShowOptionsPanel(amounts, OnAmountOptionSelected);
+    }
+
+    private void OnAmountOptionSelected(string amount)
+    {
+        _selectedAmount = Enum.Parse<Amount>(amount);
+        _amountSelectionText.text = amount;
+
+        TransformHelper.DeleteAllChildren(_foodSelectionParent);
+        _foodButtons.Clear();
+        _foodTexts.Clear();
+
+        int foodCount = 0;
+
+        switch (_selectedAmount)
+        {
+            case Amount.Cinco:
+                foodCount = 5;
+                break;
+            case Amount.Seis:
+                foodCount = 6;
+                break;
+        }
+
+        for (int i = 0; i < foodCount; i++)
+        {
+            SelectionPanel foodSelection = Instantiate(selectionPanelPrefab, _foodSelectionParent);
+            foodSelection.foodNameText.text = string.Empty;
+            _foodButtons.Add(foodSelection.foodButon);
+            _foodTexts.Add(foodSelection.foodNameText);
+        }
+
+        SetFoodButtons();
+
+        FoodNames = new List<string>(foodCount);
+        for (int i = 0; i < foodCount; i++)
+        {
+            FoodNames.Add(string.Empty);
+        }
+
+        _createButton.gameObject.SetActive(false);
+        _downloadButton.gameObject.SetActive(false);
+        _backButton.gameObject.SetActive(false);
+
+        EnableMenuCanvas(Panels.MainMenu);
+        UIHelpers.SetCanvasGroup(_buttonsCanvasGroup, true);
+    }
+
+    #endregion
+
     #region FOODS
+
+    private void OnFoodButtonClicked(int index)
+    {
+        _currentFoodIndex = index;
+        var foodOptions = FoodDictionaryLoader.FoodDictionary.Keys.ToList();
+        ShowOptionsPanel(foodOptions, OnFoodOptionSelected);
+    }
+
+    private void OnFoodOptionSelected(string foodName)
+    {
+        _foodTexts[_currentFoodIndex].text = foodName;
+        FoodNames[_currentFoodIndex] = foodName;
+
+        EnableMenuCanvas(Panels.MainMenu);
+        UIHelpers.SetCanvasGroup(_buttonsCanvasGroup, true);
+
+        _createButton.gameObject.SetActive(CheckIfAllFoodNamesAreSet() && CheckIfAllFoodNamesAreDifferent());
+    }
+
     private void SetFoodButtons()
     {
-        for (int i = 0; i < _foodButtons.Length; i++)
+        for (int i = 0; i < _foodButtons.Count; i++)
         {
             int index = i; // Prevent closure issue
             _foodButtons[i].GetComponentInChildren<TextMeshProUGUI>().text = ((Foods)i).ToString();
             _foodButtons[i].onClick.AddListener(() =>
             {
-                OnFoodOptionClicked(index);
+                OnFoodButtonClicked(index);
             });
         }
-    }
-    private void SetFoodsTexts()
-    {
-        foreach (var item in _foodTexts)
-        {
-            item.text = string.Empty;
-        }
-    }
-    private void OnFoodOptionClicked(int index)
-    {
-        _currentFoodIndex = index;
-
-        EnableMenuCanvas(Panels.FoodSelection);
-        UIHelpers.SetCanvasGroup(_buttonsCanvasGroup, false);
-    }
-
-    private void CreateFoodOptionButtons()
-    {
-        foreach (var item in FoodDictionaryLoader.FoodDictionary)
-        {
-            Button button = Instantiate(_optionButtonPrefab, _foodOptionsParent);
-            button.GetComponentInChildren<TextMeshProUGUI>().text = item.Key;
-            button.onClick.AddListener(() =>
-            {
-                OnFoodOptionClicked(item.Key);
-            });
-        }
-    }
-
-    private void OnFoodOptionClicked(string foodName)
-    {
-        EnableMenuCanvas(Panels.MainMenu);
-        UIHelpers.SetCanvasGroup(_buttonsCanvasGroup, true);
-
-        _foodTexts[_currentFoodIndex].text = foodName;
-        FoodNames[_currentFoodIndex] = foodName;
-
-        _createButton.gameObject.SetActive(CheckIfAllFoodNamesAreSet() && CheckIfAllFoodNamesAreDifferent());        
-    }
-
+    }   
     private bool CheckIfAllFoodNamesAreSet()
     {
         foreach (var item in FoodNames)
@@ -229,6 +271,15 @@ public class AppMenuController : Singleton<AppMenuController>
     }
 
     #endregion
+
+    private void EnableMenuCanvas(Panels panel)
+    {
+        foreach (var item in _canvasGroups)
+        {
+            bool active = item.Key == panel;
+            UIHelpers.SetCanvasGroup(item.Value, active);
+        }
+    }
 }
 public enum Days
 {
@@ -239,6 +290,12 @@ public enum Days
     Viernes,
     Sábado,
     Domingo
+}
+public enum Amount
+{
+    //Cuatro,
+    Cinco,
+    Seis
 }
 public enum Foods
 {
@@ -252,7 +309,6 @@ public enum Foods
 public enum Panels
 {
     MainMenu,
-    DaySelection,
-    FoodSelection,
+    OptionsPanel,
     MenuDisplay
 }

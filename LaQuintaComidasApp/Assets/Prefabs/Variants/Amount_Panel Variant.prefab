@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1001 &2444762300979498386
+--- !u!1001 &182178897008864597
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -88,13 +88,17 @@ PrefabInstance:
       propertyPath: m_Name
       value: Amount_Panel Variant
       objectReference: {fileID: 0}
+    - target: {fileID: 4327152316276363168, guid: 668f31d4a409ac141947c10d6f86baa0, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6883708488020517584, guid: 668f31d4a409ac141947c10d6f86baa0, type: 3}
       propertyPath: m_text
-      value: 6
+      value: Cinco
       objectReference: {fileID: 0}
     - target: {fileID: 6883708488020517584, guid: 668f31d4a409ac141947c10d6f86baa0, type: 3}
       propertyPath: m_fontSize
-      value: 50
+      value: 18
       objectReference: {fileID: 0}
     - target: {fileID: 9060280941027200969, guid: 668f31d4a409ac141947c10d6f86baa0, type: 3}
       propertyPath: m_text
@@ -102,7 +106,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9060280941027200969, guid: 668f31d4a409ac141947c10d6f86baa0, type: 3}
       propertyPath: m_fontSize
-      value: 72
+      value: 18
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

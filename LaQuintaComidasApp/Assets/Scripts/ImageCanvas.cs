@@ -23,9 +23,9 @@ public class ImageCanvas : MonoBehaviour
 
         for (int i = 0; i < _specialObject.Count; i++)
         {
-            if (i < AppMenuController.FoodNames.Count)
+            if (i < AppMenuController.Instance.FoodNames.Count)
             {
-                string foodName = AppMenuController.FoodNames[i];
+                string foodName = AppMenuController.Instance.FoodNames[i];
                 if (FoodDictionaryLoader.Instance.imagesDictionary.TryGetValue(foodName, out Sprite foodImage))
                 {
                     _specialObject[i].SetSpecialObject(foodName, foodImage);
