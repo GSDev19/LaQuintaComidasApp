@@ -53,9 +53,9 @@ public class CanvasExporter : MonoBehaviour
 
         // Compartir con Native Share
         new NativeShare().AddFile(path)
-            .SetSubject("¡Mira esta imagen!")
-            .SetText("Te comparto una imagen desde mi app Unity")
-            .SetTitle("Compartir imagen")
+            //.SetSubject("¡Mira esta imagen!")
+            //.SetText("Te comparto una imagen desde mi app Unity")
+            //.SetTitle("Compartir imagen")
             .SetCallback((result, shareTarget) =>
             {
                 Debug.Log("Resultado del share: " + result + ", destino: " + shareTarget);
