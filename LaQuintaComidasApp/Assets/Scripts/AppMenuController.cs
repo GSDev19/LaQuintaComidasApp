@@ -30,13 +30,13 @@ public class AppMenuController : Singleton<AppMenuController>
 
 
     [Header("Days")]
-    public static string SelectedDayString => Instance._selectedDay.ToString();
+    public static Days SelectedDayString => Instance._selectedDay;
     public Days _selectedDay;
     public Button _daySelectionButton;
     public TextMeshProUGUI _daySelectionText;
 
     [Header("Amount")]
-    public static string SelectedAmount => Instance._selectedAmount.ToString();
+    public static Amount SelectedAmount => Instance._selectedAmount;
     public Amount _selectedAmount;
     public Button _amountSelectionButton;
     public TextMeshProUGUI _amountSelectionText;
@@ -173,17 +173,7 @@ public class AppMenuController : Singleton<AppMenuController>
         _foodButtons.Clear();
         _foodTexts.Clear();
 
-        int foodCount = 0;
-
-        switch (_selectedAmount)
-        {
-            case Amount.Cinco:
-                foodCount = 5;
-                break;
-            case Amount.Seis:
-                foodCount = 6;
-                break;
-        }
+        int foodCount = (int)_selectedAmount;
 
         for (int i = 0; i < foodCount; i++)
         {
@@ -294,8 +284,8 @@ public enum Days
 public enum Amount
 {
     //Cuatro,
-    Cinco,
-    Seis
+    Cinco = 5,
+    Seis = 6
 }
 public enum Foods
 {
