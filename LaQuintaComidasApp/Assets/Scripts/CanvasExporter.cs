@@ -64,44 +64,4 @@ public class CanvasExporter : MonoBehaviour
 
         LoadScreenController.OnLoadingScreenEnable?.Invoke(false);
     }
-
-    //private void OnEnable()
-    //{
-    //    AppMenuController.OnDownloadMenuAction += CaptureCanvas;
-    //}
-    //private void OnDisable()
-    //{
-    //    AppMenuController.OnDownloadMenuAction -= CaptureCanvas;
-    //}
-
-    //public void CaptureCanvas()
-    //{
-    //    LoadScreenController.OnLoadingTextChanged?.Invoke("Renderizando ...");
-
-    //    // Crear una RenderTexture temporal
-    //    RenderTexture renderTex = new RenderTexture(imageWidth, imageHeight, 24);
-    //    canvasCamera.targetTexture = renderTex;
-
-    //    // Renderizar la cámara
-    //    canvasCamera.Render();
-
-    //    // Crear una Texture2D y copiar los pixeles de la RenderTexture
-    //    RenderTexture.active = renderTex;
-    //    Texture2D tex = new Texture2D(imageWidth, imageHeight, TextureFormat.RGB24, false);
-    //    tex.ReadPixels(new Rect(0, 0, imageWidth, imageHeight), 0, 0);
-    //    tex.Apply();
-
-    //    // Resetear la cámara y RenderTexture
-    //    canvasCamera.targetTexture = null;
-    //    RenderTexture.active = null;
-    //    Destroy(renderTex);
-
-    //    // Convertir a PNG y guardar
-    //    byte[] bytes = tex.EncodeToPNG();
-    //    string path = Path.Combine(Application.dataPath, fileName);
-    //    File.WriteAllBytes(path, bytes);
-    //    Debug.Log("Canvas guardado en: " + path);
-
-    //    LoadScreenController.OnLoadingScreenEnable?.Invoke(false);
-    //}
 }

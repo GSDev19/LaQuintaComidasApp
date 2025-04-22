@@ -88,6 +88,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Day_Panel Variant
       objectReference: {fileID: 0}
+    - target: {fileID: 4327152316276363168, guid: 668f31d4a409ac141947c10d6f86baa0, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6883708488020517584, guid: 668f31d4a409ac141947c10d6f86baa0, type: 3}
       propertyPath: m_text
       value: Lunes

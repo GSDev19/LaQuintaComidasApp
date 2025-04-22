@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using Utilities;
 
 public class AppMenuController : Singleton<AppMenuController>
 {
@@ -14,13 +15,15 @@ public class AppMenuController : Singleton<AppMenuController>
     public Button _backButton;
 
     public Button _optionButtonPrefab;
-    public CanvasGroup _optionMenuCanvasGroup;
+
+    public UDictionary<Panels, CanvasGroup> _canvasGroups = new UDictionary<Panels, CanvasGroup>();
+
+    public CanvasGroup _buttonsCanvasGroup;
 
     [Header("Days")]
     public Days _selectedDay;
     public Button _daySelectionButton;
     public TextMeshProUGUI _daySelectionText;
-    public CanvasGroup _daySelectionCanvasGroup;
     public Transform _dayOptionsParent;
 
     public static string SelectedDayString => Instance._selectedDay.ToString();
@@ -29,7 +32,6 @@ public class AppMenuController : Singleton<AppMenuController>
     public int _currentFoodIndex;
     public Button[] _foodButtons;
     public TextMeshProUGUI[] _foodTexts;
-    public CanvasGroup _foodSelectionCanvasGroup;
     public Transform _foodOptionsParent;
 
     public static List<string> FoodNames = new List<string>(6);
@@ -46,12 +48,11 @@ public class AppMenuController : Singleton<AppMenuController>
         _downloadButton.gameObject.SetActive(false);
         _backButton.gameObject.SetActive(false);
 
-        UIHelpers.SetCanvasGroup(_optionMenuCanvasGroup, true);
-        UIHelpers.SetCanvasGroup(_daySelectionCanvasGroup, false);
-        UIHelpers.SetCanvasGroup(_foodSelectionCanvasGroup, false);
+        EnableMenuCanvas(Panels.MainMenu);
+        UIHelpers.SetCanvasGroup(_buttonsCanvasGroup, true);
 
         _selectedDay = Days.Lunes;
-        _daySelectionButton.onClick.AddListener(() => UIHelpers.SetCanvasGroup(_daySelectionCanvasGroup, true));
+        _daySelectionButton.onClick.AddListener(() => OnDayButtonClicked());
         SetupDayButtons();
 
         SetFoodButtons();
@@ -63,6 +64,15 @@ public class AppMenuController : Singleton<AppMenuController>
             FoodNames.Add(string.Empty);
         }
     }
+
+    private void EnableMenuCanvas(Panels panel)
+    {
+        foreach (var item in _canvasGroups)
+        {
+            UIHelpers.SetCanvasGroup(item.Value, item.Key == panel);
+        }
+    }
+
     private void OnEnable()
     {
         FoodDictionaryLoader.OnImagesDictionaryLoaded += HandleImagesLoaded;
@@ -81,9 +91,8 @@ public class AppMenuController : Singleton<AppMenuController>
 
     private void OnBackButtonClicked()
     {
-        UIHelpers.SetCanvasGroup(_optionMenuCanvasGroup, true);
-        UIHelpers.SetCanvasGroup(_daySelectionCanvasGroup, false);
-        UIHelpers.SetCanvasGroup(_foodSelectionCanvasGroup, false);
+        EnableMenuCanvas(Panels.MainMenu);
+        UIHelpers.SetCanvasGroup(_buttonsCanvasGroup, true);
 
         _createButton.gameObject.SetActive(true);
         _downloadButton.gameObject.SetActive(false);
@@ -91,12 +100,14 @@ public class AppMenuController : Singleton<AppMenuController>
     }
     private void OnCreateButtonClicked()
     {
-        UIHelpers.SetCanvasGroup(_optionMenuCanvasGroup, false);
-
         LoadScreenController.OnLoadingScreenEnable?.Invoke(true);
         LoadScreenController.OnLoadingTextChanged?.Invoke("Creando imagen ...");
 
         OnCreateImageAction?.Invoke();
+
+        EnableMenuCanvas(Panels.MenuDisplay);
+        UIHelpers.SetCanvasGroup(_buttonsCanvasGroup, true);
+
         _createButton.gameObject.SetActive(false);
         _downloadButton.gameObject.SetActive(true);
         _backButton.gameObject.SetActive(true);
@@ -110,6 +121,11 @@ public class AppMenuController : Singleton<AppMenuController>
     }
 
     #region DAYS
+    private void OnDayButtonClicked()
+    {
+        EnableMenuCanvas(Panels.DaySelection);
+        UIHelpers.SetCanvasGroup(_buttonsCanvasGroup, false);
+    }
     private void SetupDayButtons()
     {
         // Corrected the foreach loop to iterate over the values of the Days enum
@@ -128,8 +144,8 @@ public class AppMenuController : Singleton<AppMenuController>
         _selectedDay = day;
         _daySelectionText.text = _selectedDay.ToString();
 
-        UIHelpers.SetCanvasGroup(_optionMenuCanvasGroup, true);
-        UIHelpers.SetCanvasGroup(_daySelectionCanvasGroup, false);
+        EnableMenuCanvas(Panels.MainMenu);
+        UIHelpers.SetCanvasGroup(_buttonsCanvasGroup, true);
     }
     #endregion
 
@@ -156,8 +172,9 @@ public class AppMenuController : Singleton<AppMenuController>
     private void OnFoodOptionClicked(int index)
     {
         _currentFoodIndex = index;
-        UIHelpers.SetCanvasGroup(_optionMenuCanvasGroup, false);
-        UIHelpers.SetCanvasGroup(_foodSelectionCanvasGroup, true);
+
+        EnableMenuCanvas(Panels.FoodSelection);
+        UIHelpers.SetCanvasGroup(_buttonsCanvasGroup, false);
     }
 
     private void CreateFoodOptionButtons()
@@ -175,8 +192,8 @@ public class AppMenuController : Singleton<AppMenuController>
 
     private void OnFoodOptionClicked(string foodName)
     {
-        UIHelpers.SetCanvasGroup(_foodSelectionCanvasGroup, false);
-        UIHelpers.SetCanvasGroup(_optionMenuCanvasGroup, true);
+        EnableMenuCanvas(Panels.MainMenu);
+        UIHelpers.SetCanvasGroup(_buttonsCanvasGroup, true);
 
         _foodTexts[_currentFoodIndex].text = foodName;
         FoodNames[_currentFoodIndex] = foodName;
@@ -231,4 +248,11 @@ public enum Foods
     Especial4, 
     Especial5,
     Especial6
+}
+public enum Panels
+{
+    MainMenu,
+    DaySelection,
+    FoodSelection,
+    MenuDisplay
 }

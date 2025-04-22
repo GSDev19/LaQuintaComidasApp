@@ -12,10 +12,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Food2_Panel
       objectReference: {fileID: 0}
-    - target: {fileID: 857815839985784623, guid: e8f1f32193b6acb4baf5d3d5e723f8c4, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 2733062592660885408, guid: e8f1f32193b6acb4baf5d3d5e723f8c4, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -92,6 +88,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6252320051203630684, guid: e8f1f32193b6acb4baf5d3d5e723f8c4, type: 3}
+      propertyPath: m_fontSize
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 8430736385168476997, guid: e8f1f32193b6acb4baf5d3d5e723f8c4, type: 3}
+      propertyPath: m_fontSize
+      value: 100
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -113,10 +117,6 @@ PrefabInstance:
     - target: {fileID: 857815839985784623, guid: e8f1f32193b6acb4baf5d3d5e723f8c4, type: 3}
       propertyPath: m_Name
       value: Food1_Panel
-      objectReference: {fileID: 0}
-    - target: {fileID: 857815839985784623, guid: e8f1f32193b6acb4baf5d3d5e723f8c4, type: 3}
-      propertyPath: m_IsActive
-      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2733062592660885408, guid: e8f1f32193b6acb4baf5d3d5e723f8c4, type: 3}
       propertyPath: m_Pivot.x
@@ -194,6 +194,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6252320051203630684, guid: e8f1f32193b6acb4baf5d3d5e723f8c4, type: 3}
+      propertyPath: m_fontSize
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 8430736385168476997, guid: e8f1f32193b6acb4baf5d3d5e723f8c4, type: 3}
+      propertyPath: m_fontSize
+      value: 100
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -215,10 +223,6 @@ PrefabInstance:
     - target: {fileID: 857815839985784623, guid: e8f1f32193b6acb4baf5d3d5e723f8c4, type: 3}
       propertyPath: m_Name
       value: Food6_Panel
-      objectReference: {fileID: 0}
-    - target: {fileID: 857815839985784623, guid: e8f1f32193b6acb4baf5d3d5e723f8c4, type: 3}
-      propertyPath: m_IsActive
-      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2733062592660885408, guid: e8f1f32193b6acb4baf5d3d5e723f8c4, type: 3}
       propertyPath: m_Pivot.x
@@ -318,10 +322,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Food4_Panel
       objectReference: {fileID: 0}
-    - target: {fileID: 857815839985784623, guid: e8f1f32193b6acb4baf5d3d5e723f8c4, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 2733062592660885408, guid: e8f1f32193b6acb4baf5d3d5e723f8c4, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -420,10 +420,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Food3_Panel
       objectReference: {fileID: 0}
-    - target: {fileID: 857815839985784623, guid: e8f1f32193b6acb4baf5d3d5e723f8c4, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 2733062592660885408, guid: e8f1f32193b6acb4baf5d3d5e723f8c4, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -500,6 +496,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6252320051203630684, guid: e8f1f32193b6acb4baf5d3d5e723f8c4, type: 3}
+      propertyPath: m_fontSize
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 8430736385168476997, guid: e8f1f32193b6acb4baf5d3d5e723f8c4, type: 3}
+      propertyPath: m_fontSize
+      value: 100
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -521,10 +525,6 @@ PrefabInstance:
     - target: {fileID: 857815839985784623, guid: e8f1f32193b6acb4baf5d3d5e723f8c4, type: 3}
       propertyPath: m_Name
       value: Food5_Panel
-      objectReference: {fileID: 0}
-    - target: {fileID: 857815839985784623, guid: e8f1f32193b6acb4baf5d3d5e723f8c4, type: 3}
-      propertyPath: m_IsActive
-      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2733062592660885408, guid: e8f1f32193b6acb4baf5d3d5e723f8c4, type: 3}
       propertyPath: m_Pivot.x
@@ -650,7 +650,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1051009440109930037, guid: 668f31d4a409ac141947c10d6f86baa0, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 1500
+      value: 2600
       objectReference: {fileID: 0}
     - target: {fileID: 1051009440109930037, guid: 668f31d4a409ac141947c10d6f86baa0, type: 3}
       propertyPath: m_LocalPosition.x
