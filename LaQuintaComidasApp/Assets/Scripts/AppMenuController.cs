@@ -10,14 +10,13 @@ public class AppMenuController : Singleton<AppMenuController>
 {
     public static Action OnCreateImageAction;
     public static Action OnDownloadMenuAction;
+    public static Action OnRemoveMenuAction;
 
     public Button _createButton;
     public Button _downloadButton;
     public Button _backButton;
 
     public SelectionPanel selectionPanelPrefab;
-
-
 
     public UDictionary<Panels, CanvasGroup> _canvasGroups = new UDictionary<Panels, CanvasGroup>();
 
@@ -93,6 +92,8 @@ public class AppMenuController : Singleton<AppMenuController>
     {
         EnableMenuCanvas(Panels.MainMenu);
         UIHelpers.SetCanvasGroup(_buttonsCanvasGroup, true);
+
+        OnRemoveMenuAction?.Invoke();
 
         _createButton.gameObject.SetActive(true);
         _downloadButton.gameObject.SetActive(false);

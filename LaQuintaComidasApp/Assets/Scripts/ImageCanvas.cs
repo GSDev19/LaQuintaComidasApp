@@ -1,5 +1,7 @@
 using NUnit.Framework;
+using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 
@@ -13,13 +15,23 @@ public class ImageCanvas : MonoBehaviour
     private void OnEnable()
     {
         AppMenuController.OnCreateImageAction += HandleCreateImage;
+        AppMenuController.OnRemoveMenuAction += HandleRemoveMenu;
     }
     private void OnDisable()
     {
         AppMenuController.OnCreateImageAction -= HandleCreateImage;
+        AppMenuController.OnRemoveMenuAction -= HandleRemoveMenu;
     }
     private void HandleCreateImage()
     {
+        StartCoroutine(HandleCreateImageCoroutine());
+    }  
+
+    private IEnumerator HandleCreateImageCoroutine()
+    {
+        LoadScreenController.OnLoadingScreenEnable?.Invoke(true);
+        LoadScreenController.OnLoadingTextChanged?.Invoke("Creando menu...");
+
         _dayText.text = AppMenuController.SelectedDayString.ToString();
 
         UIHelpers.SetCanvasGroup(_specialsContainer5.specialCanvasGroup, false);
@@ -38,29 +50,49 @@ public class ImageCanvas : MonoBehaviour
             UIHelpers.SetCanvasGroup(_specialsContainer6.specialCanvasGroup, true);
         }
 
+        int completedCount = 0;
+        int expectedCount = Mathf.Min(AppMenuController.Instance.FoodNames.Count, activeSpecialObjects.Count);
+
         for (int i = 0; i < activeSpecialObjects.Count; i++)
         {
             if (i < AppMenuController.Instance.FoodNames.Count)
             {
                 string foodName = AppMenuController.Instance.FoodNames[i];
-                if (FoodDictionaryLoader.Instance.imagesDictionary.TryGetValue(foodName, out Sprite foodImage))
+                activeSpecialObjects[i].foodText.text = foodName;
+                activeSpecialObjects[i].gameObject.SetActive(true);
+
+                FoodDictionaryLoader.RequestSprite(foodName, activeSpecialObjects[i].foodImage, () =>
                 {
-                    activeSpecialObjects[i].SetSpecialObject(foodName, foodImage);
-                    activeSpecialObjects[i].gameObject.SetActive(true);
-                }
-                else
-                {
-                    Debug.LogWarning($"Image not found for food: {foodName}");
-                    activeSpecialObjects[i].gameObject.SetActive(false);
-                }
+                    completedCount++;
+                });
             }
             else
             {
                 activeSpecialObjects[i].gameObject.SetActive(false);
             }
-        } 
+        }
+
+        // Wait until all images are done
+        while (completedCount < expectedCount)
+        {
+            yield return null;
+        }
 
         LoadScreenController.OnLoadingScreenEnable?.Invoke(false);
+    }
+
+    private void HandleRemoveMenu()
+    {
+        foreach (var specialObject in _specialsContainer5._specialObject)
+        {
+            specialObject.foodImage.sprite = null;
+        }
+        foreach (var specialObject in _specialsContainer6._specialObject)
+        {
+            specialObject.foodImage.sprite = null;
+        }
+
+        FoodDictionaryLoader.ClearLoadedSprites();
     }
 }
 [System.Serializable]

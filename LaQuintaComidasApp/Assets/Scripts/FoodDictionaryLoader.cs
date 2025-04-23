@@ -11,11 +11,9 @@ public class FoodDictionaryLoader : Singleton<FoodDictionaryLoader>
     public static Action OnAppLoaded;
 
     public string sheetCSVUrl = "https://docs.google.com/spreadsheets/d/e/YOUR_ID/pub?output=csv";
-
-    public static UDictionary<string, string> FoodDictionary => Instance.foodDictionary;
-    public UDictionary<string, string> foodDictionary = new UDictionary<string, string>();
-
-    public UDictionary<string, Sprite> imagesDictionary = new UDictionary<string, Sprite>();
+    public static UDictionary<string, string> FoodDictionary => Instance.foodLinkDictionary;
+    public UDictionary<string, string> foodLinkDictionary = new UDictionary<string, string>();
+    private static List<Sprite> _loadedSprites = new List<Sprite>();
 
     public Button _optionButtonPrefab;
 
@@ -29,8 +27,7 @@ public class FoodDictionaryLoader : Singleton<FoodDictionaryLoader>
     protected override void Awake()
     {
         base.Awake();
-        foodDictionary.Clear();
-        imagesDictionary.Clear();
+        foodLinkDictionary.Clear();
         _maxOptionButtons = 0;
     }
 
@@ -58,8 +55,6 @@ public class FoodDictionaryLoader : Singleton<FoodDictionaryLoader>
         string text = www.downloadHandler.text;
         string[] rows = text.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
 
-        int pendingDownloads = 0;
-
         foreach (string row in rows)
         {
             string[] columns = row.Split(',');
@@ -69,45 +64,28 @@ public class FoodDictionaryLoader : Singleton<FoodDictionaryLoader>
                 string name = columns[0].Trim().Replace("\"", "");
                 string link = columns[1].Trim().Replace("\"", "");
 
-                if (!foodDictionary.ContainsKey(name))
+                if (!foodLinkDictionary.ContainsKey(name))
                 {
-                    foodDictionary.Add(name, link);
-                    pendingDownloads++;
-                    StartCoroutine(DownloadImage(name, ConvertToDirectLink(link), () =>
-                    {
-                        pendingDownloads--;
-                    }));
+                    foodLinkDictionary.Add(name, link);
                 }
             }
         }
 
-        LoadScreenController.OnLoadingTextChanged?.Invoke("Cargando imagenes ...");
+        yield return new WaitForEndOfFrame();
 
-        yield return new WaitUntil(() => pendingDownloads <= 0);
-
-        _maxOptionButtons = foodDictionary.Count;
+        _maxOptionButtons = foodLinkDictionary.Count;
         StartCoroutine(InitializeOptionButtonsPoolCoroutine());
     }
-
-    string ConvertToDirectLink(string shareLink)
+    public static void RequestSprite(string name, Image targetImage, Action onComplete = null)
     {
-        string id = "";
-        var parts = shareLink.Split('/');
-        for (int i = 0; i < parts.Length; i++)
-        {
-            if (parts[i] == "d" && i + 1 < parts.Length)
-            {
-                id = parts[i + 1];
-                break;
-            }
-        }
-
-        return $"https://drive.google.com/uc?export=download&id={id}";
+        Instance.StartCoroutine(DownloadImage(name, targetImage, onComplete));
     }
 
-    IEnumerator DownloadImage(string name, string url, Action onComplete)
+    public static IEnumerator DownloadImage(string name, Image targetImage, Action onComplete = null)
     {
-        UnityWebRequest www = UnityWebRequestTexture.GetTexture(url);
+        string textureLink = LoadAssetHelper.ConvertToDirectLink(FoodDictionary[name]);
+        UnityWebRequest www = UnityWebRequestTexture.GetTexture(textureLink);
+
         yield return www.SendWebRequest();
 
         if (www.result != UnityWebRequest.Result.Success)
@@ -120,36 +98,29 @@ public class FoodDictionaryLoader : Singleton<FoodDictionaryLoader>
         {
             Texture2D texture = DownloadHandlerTexture.GetContent(www);
 
-            Texture2D resized = ResizeTexture(texture, 512, 512);
+            Texture2D resized = LoadAssetHelper.ResizeTexture(texture, 512, 512);
             Sprite sprite = Sprite.Create(resized, new Rect(0, 0, 512, 512), new Vector2(0.5f, 0.5f));
 
-            if (!imagesDictionary.ContainsKey(name))
+            targetImage.sprite = sprite;
+            _loadedSprites.Add(sprite);
+        }
+
+        if(onComplete != null) onComplete?.Invoke();
+    }
+    public static void ClearLoadedSprites()
+    {
+        foreach (var sprite in _loadedSprites)
+        {
+            if (sprite != null)
             {
-                imagesDictionary.Add(name, sprite);
-                // Debug.Log($"🖼️ Sprite loaded: {name}");
+                Destroy(sprite.texture);  // destroy the texture first
+                Destroy(sprite);          // destroy the sprite itself
             }
         }
 
-        onComplete?.Invoke();
+        _loadedSprites.Clear();
     }
 
-    Texture2D ResizeTexture(Texture2D source, int width, int height)
-    {
-        RenderTexture rt = RenderTexture.GetTemporary(width, height);
-        Graphics.Blit(source, rt);
-
-        RenderTexture previous = RenderTexture.active;
-        RenderTexture.active = rt;
-
-        Texture2D result = new Texture2D(width, height);
-        result.ReadPixels(new Rect(0, 0, width, height), 0, 0);
-        result.Apply();
-
-        RenderTexture.active = previous;
-        RenderTexture.ReleaseTemporary(rt);
-
-        return result;
-    }
     private IEnumerator InitializeOptionButtonsPoolCoroutine()
     {
         _optionButtonsPool = new List<Button>();
