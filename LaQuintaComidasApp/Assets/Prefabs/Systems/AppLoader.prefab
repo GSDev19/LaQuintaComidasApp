@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 6905014565615014482}
   - component: {fileID: 6845950115838657932}
   m_Layer: 0
-  m_Name: CSVLoader
+  m_Name: AppLoader
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -51,3 +51,6 @@ MonoBehaviour:
   imagesDictionary:
     keys: []
     values: []
+  _optionButtonPrefab: {fileID: 5723139001663807189, guid: b0d4d742a53309f4d881573e2103544f, type: 3}
+  _optionsContentParent: {fileID: 0}
+  _maxOptionButtons: 150

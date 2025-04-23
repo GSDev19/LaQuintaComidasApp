@@ -17,17 +17,11 @@ public class AppMenuController : Singleton<AppMenuController>
 
     public SelectionPanel selectionPanelPrefab;
 
-    public Button _optionButtonPrefab;
+
 
     public UDictionary<Panels, CanvasGroup> _canvasGroups = new UDictionary<Panels, CanvasGroup>();
 
     public CanvasGroup _buttonsCanvasGroup;
-
-    [Header("Options Pool")]
-    public Transform _optionsContentParent;
-    public int _maxOptionButtons = 200;
-    private List<Button> _optionButtonsPool = new List<Button>();
-
 
     [Header("Days")]
     public static Days SelectedDayString => Instance._selectedDay;
@@ -70,31 +64,18 @@ public class AppMenuController : Singleton<AppMenuController>
         _selectedAmount = Amount.Seis;
         _amountSelectionText.text = string.Empty;
         _amountSelectionButton.onClick.AddListener(() => OnAmountButtonClicked());
+    }
 
-        InitializeOptionButtonsPool();
-    }
-    private void InitializeOptionButtonsPool()
-    {
-        for (int i = 0; i < _maxOptionButtons; i++)
-        {
-            Button button = Instantiate(_optionButtonPrefab, _optionsContentParent);
-            button.gameObject.SetActive(false);
-            _optionButtonsPool.Add(button);
-        }
-    }
     private void ShowOptionsPanel(List<string> optionNames, Action<string> onOptionSelected)
     {
         EnableMenuCanvas(Panels.OptionsPanel);
         UIHelpers.SetCanvasGroup(_buttonsCanvasGroup, false);
 
-        for (int i = 0; i < _optionButtonsPool.Count; i++)
-        {
-            _optionButtonsPool[i].gameObject.SetActive(false);
-        }
+        FoodDictionaryLoader.TurnOffOptionButtonsPool();
 
         for (int i = 0; i < optionNames.Count; i++)
         {
-            var button = _optionButtonsPool[i];
+            var button = FoodDictionaryLoader.OptionButtonsPool[i];
             button.gameObject.SetActive(true);
             button.GetComponentInChildren<TextMeshProUGUI>().text = optionNames[i];
 
